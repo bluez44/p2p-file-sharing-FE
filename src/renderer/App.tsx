@@ -1,50 +1,50 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
-import './App.css';
+import React, { useState, Dispatch, SetStateAction, useEffect, useRef } from 'react';
 
-function Hello() {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-}
+import './App.css';
+import Home from './pages/Home';
+import Nodes from './pages/Nodes';
+import { toast, ToastContainer } from 'react-toastify';
+import Download from './pages/Download';
+
+export const context = React.createContext<[boolean, Dispatch<SetStateAction<boolean>>]>([false, () => {}]);
+
 
 export default function App() {
+  const [isConnected, setIsConnected] = useState(false);
+
+  const firstUpdate = useRef(true);
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    
+    if (isConnected) {
+      toast.success('Đã kết nối với server!')
+    }
+    else 
+      toast.error("Đã ngắt kết nối với server!")
+  }, [isConnected]);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+    <context.Provider value={[isConnected, setIsConnected]}>
+      <ToastContainer />
+      <Router>
+          <div className='text-center'>
+            {/* <Link className='btn btn-secondary' to={'/'}>Home</Link> */}
+            {/* <Link className='btn btn-secondary  mx-2' to={'/download'}>Download</Link> */}
+            {/* <Link className='btn btn-secondary' to={'/nodes'}>Nodes</Link> */}
+          </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/nodes" element={<Nodes />} />
+            {/* <Route path="/download" element={<Download />} /> */}
+          </Routes>
+      </Router>
+      
+    </context.Provider>
   );
 }
