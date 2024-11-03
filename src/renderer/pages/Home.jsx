@@ -1,35 +1,43 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from '../api';
-
-import Content from '../components/Content';
 import { Link } from 'react-router-dom';
+
+import axios from '../api';
+import Content from '../components/Content';
+import ProgressBar from '../components/ProgressBar';
+import MyButton from '../components/MyButton';
 
 function Home() {
   const [files, setFiles] = useState(
     [
       {
-        name: 'asdfkjjhqbweorkijhaksldjvbklasjdhvalskdjhfalksdfjh',
+        name: 'test1',
         id: 1,
         size: 32,
-        status: 'downloading'
+        status: 'download'
       },
       {
-        name: 'asdfkjjhqbweorkijhaksldjvbklasjdhvalskdjhfalksdfjh',
+        name: 'test2',
         id: 2,
         size: 32,
         status: 'ready'
       },
       {
-        name: 'asdfkjjhqbweorkijhaksldjvbklasjdhvalskdjhfalksdfjh',
+        name: 'test4',
         id: 3,
         size: 32,
         status: 'done'
       },
       {
-        name: 'asdfkjjhqbweorkijhaksldjvbklasjdhvalskdjhfalksdfjh',
+        name: 'set6',
         id: 4,
         size: 32,
-        status: 'downloading'
+        status: 'upload'
+      },
+      {
+        name: 'test9',
+        id: 5,
+        size: 32,
+        status: 'error'
       },
         
         
@@ -59,25 +67,12 @@ function Home() {
             {files.map((file) => (
             <li className='list-group-item d-flex justify-content-between align-items-center' key={file.id}>
                 <div className='d-flex align-items-start flex-column gap-2'>
-                  <span className='d-inline-block'>{file.name} - {file.size} MB</span>
-                  {file.status === 'downloading' &&
-                    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                      <div class="progress-bar bg-success" style={{width: '25%'}}></div>
-                    </div>
-                  }
+                  <span className='d-inline-block'>{file.name}</span>
+                  <p className='' style={{fontSize: '11px', margin: '0'}}>15 of {file.size} MB (25.61%) - 2hrs, 3min remaining</p>
+                  <ProgressBar status={file.status} />
+                  <p className='' style={{fontSize: '11px', margin: '0'}}>Download from {3} of {3} peers - DL: {390.8} KB/s, UL: {390.8} KB/s</p>
                 </div>
-                {file.status === 'ready' && <Link className='btn btn-sm btn-outline-primary' to={`/download?fileId=${file.id}`}>Tải xuống</Link>}
-                {file.status === 'done' && <span className='badge bg-success rounded-pill'>Đã tải</span>}
-                {file.status === 'downloading' && 
-                  <Link className='btn btn-sm btn-outline-warning' 
-                        onClick={
-                          // () => axios.get(`/tracker/stop?fileId=${file.id}`)
-                          () => console.log(file.id)
-                        }
-                  >
-                    Tạm dừng
-                  </Link>
-                }
+                <MyButton status={file.status} id={file.id} name={file.name}/>
             </li>
             ))}
         </ul>

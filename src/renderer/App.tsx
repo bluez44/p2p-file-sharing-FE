@@ -1,12 +1,10 @@
 import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
 import React, { useState, Dispatch, SetStateAction, useEffect, useRef } from 'react';
 
 import './App.css';
 import Home from './pages/Home';
 import Nodes from './pages/Nodes';
 import { toast, ToastContainer } from 'react-toastify';
-import Download from './pages/Download';
 
 export const context = React.createContext<[boolean, Dispatch<SetStateAction<boolean>>]>([false, () => {}]);
 
