@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -137,3 +137,31 @@ app
     });
   })
   .catch(console.log);
+
+
+// Handle save dialog request from renderer
+// ipcMain.handle('show-save-dialog', async () => {
+//   const { canceled, filePath } = await dialog.showSaveDialog({
+//     title: 'Select the File Path to save',
+//     buttonLabel: 'Save',
+//     filters: [
+//       { name: 'Text Files', extensions: ['txt'] },
+//       { name: 'All Files', extensions: ['*'] },
+//     ],
+//   });
+
+//   // Return the selected file path (if not canceled)
+//   return canceled ? null : filePath;
+// });
+
+// Handle open folder dialog request from renderer
+ipcMain.handle('show-folder-dialog', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    title: 'Chọn thư mục để lưu',
+    buttonLabel: 'Chọn thư mục',
+    properties: ['openDirectory'],
+  });
+
+  // Return the selected folder path (if not canceled)
+  return canceled ? null : filePaths[0];
+});

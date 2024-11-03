@@ -35,14 +35,14 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
     if (status === 'download' || status === 'upload') 
         return (
             <div className='d-flex justify-content-center align-items-center'>
-            <button className='btn btn-sm btn-outline-warning' 
+            {/* <button className='btn btn-sm btn-outline-warning' 
                     onClick={
                     // () => axios.get(`/tracker/stop?fileId=${file.id}`)
                     () => console.log(id)
                     }
             >
                 Tạm dừng
-            </button>
+            </button> */}
             <MyModal name={name} id={id}/>      
 
             </div>
