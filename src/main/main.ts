@@ -9,6 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import fs from 'fs'
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -140,19 +141,19 @@ app
 
 
 // Handle save dialog request from renderer
-// ipcMain.handle('show-save-dialog', async () => {
-//   const { canceled, filePath } = await dialog.showSaveDialog({
-//     title: 'Select the File Path to save',
-//     buttonLabel: 'Save',
-//     filters: [
-//       { name: 'Text Files', extensions: ['txt'] },
-//       { name: 'All Files', extensions: ['*'] },
-//     ],
-//   });
+ipcMain.handle('show-save-dialog', async () => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Select the File Path to save',
+    buttonLabel: 'Save',
+    filters: [
+      // { name: 'Text Files', extensions: ['txt'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  });
 
-//   // Return the selected file path (if not canceled)
-//   return canceled ? null : filePath;
-// });
+  // Return the selected file path (if not canceled)
+  return canceled ? null : filePath;
+});
 
 // Handle open folder dialog request from renderer
 ipcMain.handle('show-folder-dialog', async () => {
@@ -164,4 +165,17 @@ ipcMain.handle('show-folder-dialog', async () => {
 
   // Return the selected folder path (if not canceled)
   return canceled ? null : filePaths[0];
+});
+
+
+ipcMain.on("save-file", (event, listData) => {
+  const filePath = path.join(app.getPath("desktop"), "savedMagenetText.json");
+
+  fs.writeFile(filePath, JSON.stringify(listData, null, 2), (err) => {
+    if (err) {
+      console.error("An error occurred while saving the file", err);
+    } else {
+      console.log("File has been saved successfully!");
+    }
+  });
 });

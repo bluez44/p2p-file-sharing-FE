@@ -26,12 +26,13 @@ const electronHandler = {
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
+contextBridge.exposeInMainWorld('electronAPI', {
+  showSaveDialog: () => ipcRenderer.invoke('show-save-dialog')
+});
+
 // contextBridge.exposeInMainWorld('electronAPI', {
-//   showSaveDialog: () => ipcRenderer.invoke('show-save-dialog')
+//   showFolderDialog: () => ipcRenderer.invoke('show-folder-dialog')
 // });
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  showFolderDialog: () => ipcRenderer.invoke('show-folder-dialog')
-});
 
 export type ElectronHandler = typeof electronHandler;

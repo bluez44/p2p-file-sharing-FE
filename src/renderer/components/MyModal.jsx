@@ -11,11 +11,11 @@ function MyModal({ name, id}) {
 
   const [information, setInformation] = useState([]);
 
-  useEffect(() => {
-    axios.get('/posts/').then((response) => {
-          setInformation(response.data);
-        });
-  }, [])
+  // useEffect(() => {
+  //   axios.get('/posts/').then((response) => {
+  //         setInformation(response.data);
+  //       });
+  // }, [])
 
   return (
     <>

@@ -43,6 +43,7 @@ body {
   color: #fff;
   fill: #fff;
   width: 100%;
+  resize: none;
 }
 
 .magenet-text::placeholder {
@@ -82,5 +83,13 @@ body {
 
 .more-info:hover {
   cursor: pointer;
+  opacity: .8;
+}
+
+.share {
+  cursor: pointer;
+}
+
+.share:hover {
   opacity: .8;
 }

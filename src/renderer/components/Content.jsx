@@ -1,28 +1,66 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { context } from '../App'
+import { Link, useNavigate } from 'react-router-dom';
+
 // import { Button } from 'react-bootstrap'
 // import { ToastContainer, toast } from 'react-toastify';
 
 export default function Content({ children }) {
-  const [isConnected, setIsConnected] = useContext(context)
+  const [isConnected, setIsConnected] = useContext(context);
 
   const [torrentFile, setTorrentFile] = useState(null)
 
   const [magnetText, setMagnetText] = useState('')
+  
+  const [savedMagnetText, setSavedMagnetText] = useState(JSON.parse(localStorage.getItem('magnetText')) || [])
+
 
   useEffect(()  => {
     console.log(torrentFile)
   }, [torrentFile])
   
   const handleOnClick = () => {
-    if(magnetText || torrentFile) 
-      setIsConnected(true)
+    // Gửi request cho tracker
 
+    setSavedMagnetText([
+      ...savedMagnetText,
+      magnetText
+    ])
+
+    
+
+    setMagnetText('')
+    // console.log(window.localStorage.setItem('magnetText', [...savedMagnetText, magnetText]))
+    setIsConnected(true)
+
+    // handleSavedMagnetText()
     // toast.success('Đã kết nối với server!')
   }
 
+  useEffect(() => {
+    localStorage.setItem('magnetText', JSON.stringify(savedMagnetText))
+  }, [savedMagnetText])
+
+  // const handleSavedMagnetText = () => {
+  //   setSavedMagnetText([
+  //     ...savedMagnetText,
+  //     magnetText
+  //   ])
+
+  //   ipcRenderer.send()
+
+  //   ipcRenderer.send("save-file", savedMagnetText);
+
+  //   console.log(savedMagnetText)
+  // }
+
+  const nagative = useNavigate()
   const handleClose = () => {
     setIsConnected(false)
+
+    setTimeout(() => {
+      nagative('/')
+    }, 100)
     // toast.info("Đã ngắt kết nối với server!")
   }
 
@@ -53,7 +91,7 @@ export default function Content({ children }) {
   
   return (
       <div className='text-center wrapper'>
-          {!isConnected && 
+          {/* {!isConnected && 
             <div className='d-flex flex-column justify-content-center align-items-center my-4'>
               <form action=''>
                 <textarea 
@@ -67,7 +105,7 @@ export default function Content({ children }) {
                 <p>Hoặc chọn file .torrent</p>
                 <div className='d-flex w-100 justify-content-center align-items-center gap-2'>
                   <p style={{ padding: 0, margin: 0}}></p>
-                  <input required type='file' onChange={(event) => {setTorrentFile(event.target.files[0])}}></input>
+                  <input accept='.torrent' type='file' onChange={(event) => {setTorrentFile(event.target.files[0])}}></input>
                 </div>
                 <hr/>
                 <div>
@@ -84,17 +122,23 @@ export default function Content({ children }) {
                   type='submit' 
                   onClick={handleOnClick} 
                   value={'Kết nối tới máy chủ'}
-                  disabled={!magnetText && !torrentFile}
+                  disabled={(!magnetText && !torrentFile) || !path}
                 />
               </form>
             </div>
           }
-          {/* <ToastContainer /> */}
+          <ToastContainer /> */}
 
           {isConnected && children}
 
           {isConnected && 
-          <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button>}
+            <div>
+              <Link to={'/'} className='btn btn-secondary mt-4 mx-2'>
+                Trang chủ
+              </Link>
+              <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button>
+            </div>
+          } 
       </div>
   )
 }

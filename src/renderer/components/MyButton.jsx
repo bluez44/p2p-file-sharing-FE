@@ -8,7 +8,7 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
     if (status === 'ready')
       return (
         <div className='d-flex justify-content-center align-items-center'>
-          <Link className='btn btn-sm btn-outline-primary' to={`/download?fileId=${id}`}>Tải xuống</Link>
+          {/* <Link className='btn btn-sm btn-outline-primary' to={`/download?fileId=${id}`}>Tải xuống</Link> */}
           <MyModal name={name} id={id}/>      
         </div>
       )
@@ -17,7 +17,8 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
     if (status === 'error')
         return (
         <div className='d-flex justify-content-center align-items-center'>
-            <button disabled className='btn btn-sm btn-outline-danger' to={`/download?fileId=${id}`}>Lỗi</button>
+                <span className='badge bg-danger rounded-pill'>Lỗi</span>
+                {/* <button disabled className='btn btn-sm btn-outline-danger' to={`/download?fileId=${id}`}>Lỗi</button> */}
             <MyModal name={name} id={id}/>      
         </div>
         )
@@ -25,12 +26,10 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
     if (status === 'done')
         return (
             <div className='d-flex justify-content-center align-items-center'>
-            <span className='badge bg-success rounded-pill'>Đã tải</span>
-            <MyModal name={name} id={id}/>      
-
+                <span className='badge bg-success rounded-pill'>Đã tải</span>
+                <MyModal name={name} id={id}/>      
             </div>
         ) 
-      
 
     if (status === 'download' || status === 'upload') 
         return (

@@ -2,9 +2,10 @@ import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import React, { useState, Dispatch, SetStateAction, useEffect, useRef } from 'react';
 
 import './App.css';
-import Home from './pages/Home';
+import FileList from './pages/FileList';
 import Nodes from './pages/Nodes';
 import { toast, ToastContainer } from 'react-toastify';
+import Home from './pages/Home';
 
 export const context = React.createContext<[boolean, Dispatch<SetStateAction<boolean>>]>([false, () => {}]);
 
@@ -37,9 +38,9 @@ export default function App() {
             {/* <Link className='btn btn-secondary' to={'/nodes'}>Nodes</Link> */}
           </div>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/filelist" element={<FileList />} />
             <Route path="/nodes" element={<Nodes />} />
-            {/* <Route path="/download" element={<Download />} /> */}
+            <Route path="/" element={<Home />} />
           </Routes>
       </Router>
       

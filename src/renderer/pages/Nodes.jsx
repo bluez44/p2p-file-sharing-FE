@@ -28,7 +28,7 @@ function Nodes() {
   return (
     <Content>
         <h2>Trạng thái các Node</h2>
-        <Link className='link mb-4' to={'/'}>Danh sách các tệp có thể tải</Link>
+        <Link className='link mb-4' to={'/fileList'}>Danh sách các tệp có thể tải</Link>
         <ul className='list-group list flex-grow-1'>
             {nodes.map((node) => (
             <li className='list-group-item d-flex justify-content-between align-items-center' key={node.id}>
