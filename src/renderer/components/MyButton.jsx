@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 
 import MyModal from './MyModal';
 
-export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
+export default function MyButton({ status = 'download', id = 1, name = 'test' }) {
     if (status === 'ready')
       return (
         <div className='d-flex justify-content-center align-items-center'>
@@ -23,11 +23,11 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
         </div>
         )
 
-    if (status === 'done')
+    if (status === 'completed')
         return (
             <div className='d-flex justify-content-center align-items-center'>
                 <span className='badge bg-success rounded-pill'>Đã tải</span>
-                <MyModal name={name} id={id}/>      
+                {/* <MyModal name={name} id={id}/>       */}
             </div>
         ) 
 
@@ -42,7 +42,7 @@ export default function MyButton({ status = 'error', id = 1, name = 'test' }) {
             >
                 Tạm dừng
             </button> */}
-            <MyModal name={name} id={id}/>      
+            {/* <MyModal name={name} id={id}/>       */}
 
             </div>
         )

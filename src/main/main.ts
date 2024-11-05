@@ -167,6 +167,13 @@ ipcMain.handle('show-folder-dialog', async () => {
   return canceled ? null : filePaths[0];
 });
 
+ipcMain.handle('open-file-dialog', async () => {
+  const result = await dialog.showOpenDialog({
+      properties: ['openFile']
+  });
+  return result.filePaths[0]; // Send back the selected file path
+});
+
 
 ipcMain.on("save-file", (event, listData) => {
   const filePath = path.join(app.getPath("desktop"), "savedMagenetText.json");

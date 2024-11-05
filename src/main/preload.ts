@@ -27,7 +27,8 @@ const electronHandler = {
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  showSaveDialog: () => ipcRenderer.invoke('show-save-dialog')
+  showSaveDialog: () => ipcRenderer.invoke('show-save-dialog'),
+  openFileDialog: () => ipcRenderer.invoke('open-file-dialog')
 });
 
 // contextBridge.exposeInMainWorld('electronAPI', {

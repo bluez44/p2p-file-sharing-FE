@@ -93,3 +93,38 @@ body {
 .share:hover {
   opacity: .8;
 }
+
+.file-infor {
+  max-width: 70%;
+}
+
+.file-name {
+  width: 100%;
+  text-align: start;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.file-magnet {
+  text-align: start;
+  width: 100%;
+  font-size: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+form::-webkit-scrollbar {
+  display: none;
+}
+
+.long-text {
+  word-break: break-all;
+}
+
+@media screen and (max-width: 768px) {
+  .wrapper {
+    padding: 5px 10px;
+  }
+}

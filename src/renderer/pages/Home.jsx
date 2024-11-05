@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { context } from '../App'
+import { context, filesContext, peersContext } from '../App'
 import { Link, useNavigate } from 'react-router-dom';
-// import axios from '../api';
-import axios, { Axios } from 'axios';
+import axios from '../api';
+// import axios, { Axios } from 'axios';
 
 // import { Button } from 'react-bootstrap'
 // import { ToastContainer, toast } from 'react-toastify';
@@ -10,7 +10,7 @@ import axios, { Axios } from 'axios';
 export default function Home() {
   const [isConnected, setIsConnected] = useContext(context);
 
-  const [torrentFile, setTorrentFile] = useState(null)
+  const [torrentFilePath, setTorrentFilePath] = useState('')
   
   const [uploadFile, setUploadFile] = useState(null)
 
@@ -18,114 +18,157 @@ export default function Home() {
   
   const [savedMagnetText, setSavedMagnetText] = useState(JSON.parse(localStorage.getItem('magnetText')) || [])
 
-  useEffect(()  => {
-    console.log(torrentFile)
-  }, [torrentFile])
+  const [saveTorrentPath, setSaveTorrentPath] = useState('asdfasdfqwers');
 
-//   useEffect(()  => {
-//       axios.get('http://localhost:9999/magenet_text', {
-//             params: {
-//             magnet_text: magnetText,
-//             path: torrentPath
-//             }
-//         }
-//       ).then(res => {
-//           console.log(res.data)
-//       })
-//   })
-
-//   useEffect(()  => {
-//       axios.post('http://localhost:9999/magenet_text', {
-//             params: {
-//                 path: saveTorrentPath
-//             }
-//         }
-//       ).then(res => {
-//           console.log(res.data)
-//       })
-//   })
-
+  const [torrentPath, setTorrentPath] = useState('');
   
+  const [fileList, setFileList] = useContext(filesContext)
+
+  const [peersList, setPeersList] = useContext(peersContext)
+
+  const [state, setState] = useState('download')
+
+  const [resMagnetText, setResMagnetText] = useState('')
+
+  useEffect(()  => {
+    console.log(torrentFilePath)
+  }, [torrentFilePath])
 
   const nagative = useNavigate()
-  const handleOnClick = () => {
+
+  const handleOnClick = (e) => {
+    e.preventDefault()
+
     // Gửi request cho tracker
-    if(magnetText) {
-        setSavedMagnetText([
-            ...savedMagnetText,
-            magnetText
-        ])
+    
+    if(state == 'download') {
+      if(magnetText) {
+        axios.get('/magnet_text', {
+          params: {
+              magnet_text: magnetText,
+              path: torrentPath
+          }
+        }).then(res => {
+            console.log(res, torrentPath)
+
+            setFileList([...fileList, 
+              {
+                'magnetText': res.data.magnet_text,
+                'fileName': torrentPath.slice(torrentPath.lastIndexOf('\\') + 1),
+              }
+            ])
+            setPeersList([...peersList, res.data.peers])
+
+            if(!savedMagnetText.includes(res.data.magnet_text)) {
+              console.log('savedMagnetText', savedMagnetText);
+              
+              setSavedMagnetText([
+                ...savedMagnetText,
+                res.data.magnet_text
+              ])
+            }
+        })
+        .then(() => {
+            setTorrentPath('')
+        
+            setMagnetText('')
+  
+            setIsConnected(true)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      } 
+      else if(torrentFilePath) {
+        axios.get('/torrent_file', {
+          params: {
+            torrentPath: torrentFilePath,
+            downloadPath: torrentPath
+          }
+        }).then(res => {
+            console.log(res, torrentPath)
+
+            setFileList([...fileList, 
+              {
+                'magnetText': res.data.magnet_text,
+                'fileName': torrentPath.slice(torrentPath.lastIndexOf('\\') + 1),
+              }
+            ])
+            setPeersList([...peersList, res.data.peers])
+
+            if(!savedMagnetText.includes(res.data.magnet_text)) {
+              console.log('savedMagnetText', savedMagnetText);
+              
+              setSavedMagnetText([
+                ...savedMagnetText,
+                res.data.magnet_text
+              ])
+            }
+        })
+        .then(() => {
+            setTorrentPath('')
+        
+            setMagnetText('')
+  
+            setIsConnected(true)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+      
+      setTimeout(() => {
+        nagative('/filelist')
+      }, 100)
     }
-    else if(magnetText === '' && torrentFile != null) {
-        setSavedMagnetText([
-            ...savedMagnetText,
-            torrentFile.name
-        ])
+    else if(state == 'upload') {
+      axios.post('http://localhost:9999/magnet_text', null, {
+        params: {
+          path: uploadFile.path,
+        }
+      })
+      .then(res => {
+          // console.log(res)
+          // console.log(res.data)
+          if(!savedMagnetText.includes(res.data.magnet_text)) {
+            console.log('savedMagnetText', savedMagnetText);
+            
+            setSavedMagnetText([
+              ...savedMagnetText,
+              res.data.magnet_text
+            ])
+          }
+          setResMagnetText(res.data.magnet_text)
+
+          setFileList([...fileList, 
+            {
+              'magnetText': res.data.magnet_text,
+              'fileName': uploadFile.slice(uploadFile.lastIndexOf('\\') + 1),
+            }
+          ])
+          setPeersList([...peersList, res.data.peers])
+      })
+      .catch(err => {
+          console.log(err)
+      })
+
+      console.log('teststst');
+        
+    }
+  }
+
+  useEffect(() => {
+    if(torrentFilePath || magnetText) {
+      setState('download')
     }
     else {
-        setSavedMagnetText([
-            ...savedMagnetText,
-            uploadFile.name
-        ])
+      setState('upload')
     }
-
-    fetch('http://localhost:9999/magnet_text', {
-        method: 'GET',
-        headers: {'Access-Control-Allow-Origin': 'http://localhost:9999'}
-        // body: JSON.stringify({
-        //     magnet_text: magnetText,
-        //     path: torrentFile
-        // })
-    })
-    .then(res => {
-        console.log(res.data)
-    })
-    .catch(err => {
-        console.log(err)
-    })
-    
-    // axios.get('http://localhost:9999/magenet_text', {
-    //       params: {
-    //         magnet_text: magnetText,
-    //         path: torrentPath
-    //       },
-    //   }
-    // ).then(res => {
-    //     console.log(res.data)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
-    
-    setTorrentPath('')
-    
-    setMagnetText('')
-    // console.log(window.localStorage.setItem('magnetText', [...savedMagnetText, magnetText]))
-    setIsConnected(true)
-    
-    setTimeout(() => {
-      nagative('/filelist')
-    }, 100)
-    // nagative('/filelist')
-    // handleSavedMagnetText()
-    // toast.success('Đã kết nối với server!')
-  }
+  }, [torrentFilePath, uploadFile, magnetText])
 
   useEffect(() => {
     localStorage.setItem('magnetText', JSON.stringify(savedMagnetText))
   }, [savedMagnetText])
-
-  // const handleSavedMagnetText = () => {
-  //   setSavedMagnetText([
-  //     ...savedMagnetText,
-  //     magnetText
-  //   ])
-
-  //   ipcRenderer.send()
-
-  //   ipcRenderer.send("save-file", savedMagnetText);
-
-  //   console.log(savedMagnetText)
-  // }
 
   const handleClose = () => {
     setIsConnected(false)
@@ -146,7 +189,14 @@ export default function Home() {
     }
   };
 
-  const [torrentPath, setTorrentPath] = useState('');
+  const selectFile = async (e) => {
+    e.preventDefault()
+    const path = await window.electronAPI.openFileDialog();
+    if (path) {
+        setTorrentFilePath(path);
+    }
+  };
+
 //   const handleSelectFolder = async (e) => {
 //     e.preventDefault();
 
@@ -160,7 +210,6 @@ export default function Home() {
 //     }
 //   };
 
-  const [saveTorrentPath, setSaveTorrentPath] = useState('');
   const handleSaveTorrent = async (e) => {
     e.preventDefault();
 
@@ -180,12 +229,12 @@ export default function Home() {
 
   return (
       <div className='text-center wrapper'>
-        <div className='d-flex flex-column justify-content-center align-items-center my-4'>
-            <form action=''>
+        <div className='d-flex flex-column justify-content-center align-items-center h-100'>
+            <form action='' className='overflow-auto h-100'>
                 <div>
                     <p className='fs-1'>Tải file từ máy chủ</p>
                     <textarea 
-                        disabled={torrentFile || uploadFile}
+                        disabled={torrentFilePath || uploadFile}
                         value={magnetText} 
                         className='p-2 magenet-text' 
                         rows="4" cols="100" 
@@ -194,12 +243,25 @@ export default function Home() {
                         onChange={(event) => {setMagnetText(event.target.value)}}
                     />
                     <p>Hoặc chọn file .torrent</p>
-                    <div className='d-flex w-100 justify-content-center align-items-center gap-2 mb-2'>
-                        <p style={{ padding: 0, margin: 0}}></p>
+                    <div 
+                      className='mb-4'
+                      // className='d-flex w-100 justify-content-center align-items-center gap-2 mb-2'
+                    >
+                        {/* <p style={{ padding: 0, margin: 0}}></p>
                         <input disabled={magnetText || uploadFile} accept='.torrent' type='file' onChange={(event) => {setTorrentFile(event.target.files[0])}}></input>
                         {
                             torrentFile && <button className='btn btn-sm btn-danger' onClick={e => setTorrentFile(null)}>Xóa file</button>
+                        } */}
+                        <p className={`${!torrentFilePath ? 'text-warning' : ''}`}>
+                        {
+                            torrentFilePath ? `Đường dẫn file torrent của bạn là: ${torrentFilePath}` : 'Bạn chưa chọn đường dẫn file torrent'
+                        
                         }
+                        </p>
+                        <div>
+                            <button disabled={uploadFile || magnetText} className='btn btn-primary' onClick={e => selectFile(e)}>Chọn đường dẫn của file torrent</button>
+                            {torrentFilePath &&  <button className='btn btn-danger mx-4' onClick={e => {e.preventDefault();  setTorrentFilePath('')}}>Xóa đường dẫn lưu file torrent</button>}
+                        </div>
                     </div>
                     <div>
                         <p className={`${!torrentPath ? 'text-warning' : ''}`}>
@@ -220,21 +282,26 @@ export default function Home() {
                     <p className='fs-1'>Chia sẻ file lên máy chủ</p>
                     <div className='d-flex w-100 justify-content-center align-items-center gap-2 mb-2'>
                         <p style={{ padding: 0, margin: 0}}></p>
-                        <input disabled={magnetText || torrentFile} accept='*' type='file' onChange={(event) => {setUploadFile(event.target.files[0])}}></input>
+                        <input disabled={magnetText || torrentFilePath} accept='*' type='file' onChange={(event) => {setUploadFile(event.target.files[0])}}></input>
                         {
                             uploadFile && <button className='btn btn-sm btn-danger' onClick={e => setUploadFile(null)}>Xóa file</button>
                         }
                     </div>
-                    <p className={`${!saveTorrentPath ? 'text-warning' : ''}`}>
+                    <p className='long-text'>
+                        {
+                            resMagnetText ? `Magnet của bạn text là: ${resMagnetText}` : ''
+                        }
+                    </p>
+                    {/* <p className={`${!saveTorrentPath ? 'text-warning' : ''}`}>
                         {
                             saveTorrentPath ? `Đường dẫn lưu file của bạn là: ${saveTorrentPath}` : 'Bạn chưa chọn nơi lưu file'
                         
                         }
-                    </p>
-                    <div>
+                    </p> */}
+                    {/* <div>
                         <button disabled={magnetText || torrentFile} className='btn btn-primary' onClick={e => handleSaveTorrent(e)}>Chọn đường dẫn lưu file .torrent</button>
                         {saveTorrentPath &&  <button className='btn btn-danger mx-4' onClick={e => {e.preventDefault();  setSaveTorrentPath('')}}>Xóa đường dẫn lưu file</button>}
-                    </div>
+                    </div> */}
                 </div>
                 <hr/>
                 {
@@ -242,10 +309,10 @@ export default function Home() {
                     <button
                     className='btn btn-primary mt-4' 
                     type='submit' 
-                    onClick={handleOnClick} 
-                    disabled={ ((!magnetText && !torrentFile) || !torrentPath) && (!uploadFile || !saveTorrentPath) }
+                    onClick={e => handleOnClick(e)} 
+                    disabled={ ((!magnetText && !torrentFilePath) || !torrentPath) && (!uploadFile || !saveTorrentPath) }
                     >
-                        Kết nối với máy chủ
+                        {state === 'download' ? 'Tải về' : 'Chia sẻ'}
                     </button>
                 }
             </form>
@@ -258,7 +325,10 @@ export default function Home() {
             <div>
               <button 
                 // disabled={(!magnetText && !torrentFile) || !path} 
-                onClick={handleOnClick} className='btn btn-secondary mt-4 mx-2'>
+                onClick={handleOnClick} className='btn btn-secondary mt-4 mx-2'
+                disabled={ ((!magnetText && !torrentFilePath) || !torrentPath) && 
+                           (!uploadFile || !saveTorrentPath) }
+              >
                 Nhập magnet text
               </button>
               <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button>
