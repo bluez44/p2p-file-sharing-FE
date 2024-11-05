@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { context, filesContext, peersContext } from '../App'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from '../api';
+import { ToastContainer, toast } from 'react-toastify';
 // import axios, { Axios } from 'axios';
 
 // import { Button } from 'react-bootstrap'
@@ -76,6 +77,7 @@ export default function Home() {
             setIsConnected(true)
         })
         .catch(err => {
+          toast.error("Magenet text không hợp lệ")
           console.log(err)
         })
       } 
@@ -113,13 +115,16 @@ export default function Home() {
             setIsConnected(true)
         })
         .catch(err => {
+          toast.error("Torrent không hợp lệ")
           console.log(err)
         })
       }
       
-      setTimeout(() => {
-        nagative('/filelist')
-      }, 100)
+      if(isConnected) {
+        setTimeout(() => {
+          nagative('/filelist')
+        }, 100)
+      }
     }
     else if(state == 'upload') {
       axios.post('http://localhost:9999/magnet_text', null, {
@@ -229,6 +234,7 @@ export default function Home() {
 
   return (
       <div className='text-center wrapper'>
+        <ToastContainer/>
         <div className='d-flex flex-column justify-content-center align-items-center h-100'>
             <form action='' className='overflow-auto h-100'>
                 <div>
@@ -305,15 +311,15 @@ export default function Home() {
                 </div>
                 <hr/>
                 {
-                    !isConnected &&
-                    <button
+                    
+                  <button
                     className='btn btn-primary mt-4' 
                     type='submit' 
                     onClick={e => handleOnClick(e)} 
                     disabled={ ((!magnetText && !torrentFilePath) || !downloadPath) && (!uploadFile || !saveTorrentPath) }
-                    >
-                        {state === 'download' ? 'Tải về' : 'Chia sẻ'}
-                    </button>
+                  >
+                      {state === 'download' ? 'Tải về' : 'Chia sẻ'}
+                  </button>
                 }
             </form>
         </div>
@@ -321,19 +327,18 @@ export default function Home() {
           
           {/* <ToastContainer /> */}
 
-          {isConnected && 
+          {/* {isConnected && 
             <div>
-              <button 
-                // disabled={(!magnetText && !torrentFile) || !path} 
-                onClick={handleOnClick} className='btn btn-secondary mt-4 mx-2'
-                disabled={ ((!magnetText && !torrentFilePath) || !downloadPath) && 
-                           (!uploadFile || !saveTorrentPath) }
+              <button
+                className='btn btn-primary mt-4' 
+                type='submit' 
+                onClick={e => handleOnClick(e)} 
+                disabled={ ((!magnetText && !torrentFilePath) || !downloadPath) && (!uploadFile || !saveTorrentPath) }
               >
-                Nhập magnet text
+                    {state === 'download' ? 'Tải về' : 'Chia sẻ'}
               </button>
-              <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button>
             </div>
-          } 
+          }  */}
       </div>
   )
 }

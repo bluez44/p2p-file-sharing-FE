@@ -136,7 +136,7 @@ export default function Content({ children }) {
               <Link to={'/'} className='btn btn-secondary mt-4 mx-2'>
                 Trang chủ
               </Link>
-              <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button>
+              {/* <button className='btn btn-danger mt-4' onClick={handleClose}>Ngắt kết nối với máy chủ</button> */}
             </div>
           } 
       </div>
