@@ -20,7 +20,7 @@ export default function Home() {
 
   const [saveTorrentPath, setSaveTorrentPath] = useState('asdfasdfqwers');
 
-  const [torrentPath, setTorrentPath] = useState('');
+  const [downloadPath, setDownloadPath] = useState('');
   
   const [fileList, setFileList] = useContext(filesContext)
 
@@ -46,15 +46,15 @@ export default function Home() {
         axios.get('/magnet_text', {
           params: {
               magnet_text: magnetText,
-              path: torrentPath
+              path: downloadPath
           }
         }).then(res => {
-            console.log(res, torrentPath)
+            console.log(res, downloadPath)
 
             setFileList([...fileList, 
               {
                 'magnetText': res.data.magnet_text,
-                'fileName': torrentPath.slice(torrentPath.lastIndexOf('\\') + 1),
+                'fileName': downloadPath.slice(downloadPath.lastIndexOf('\\') + 1),
               }
             ])
             setPeersList([...peersList, res.data.peers])
@@ -69,7 +69,7 @@ export default function Home() {
             }
         })
         .then(() => {
-            setTorrentPath('')
+            setDownloadPath('')
         
             setMagnetText('')
   
@@ -82,16 +82,16 @@ export default function Home() {
       else if(torrentFilePath) {
         axios.get('/torrent_file', {
           params: {
-            torrentPath: torrentFilePath,
-            downloadPath: torrentPath
+            torrent_path: torrentFilePath,
+            download_path: downloadPath
           }
         }).then(res => {
-            console.log(res, torrentPath)
+            console.log(res, downloadPath)
 
             setFileList([...fileList, 
               {
                 'magnetText': res.data.magnet_text,
-                'fileName': torrentPath.slice(torrentPath.lastIndexOf('\\') + 1),
+                'fileName': downloadPath.slice(downloadPath.lastIndexOf('\\') + 1),
               }
             ])
             setPeersList([...peersList, res.data.peers])
@@ -106,7 +106,7 @@ export default function Home() {
             }
         })
         .then(() => {
-            setTorrentPath('')
+            setDownloadPath('')
         
             setMagnetText('')
   
@@ -181,7 +181,7 @@ export default function Home() {
     const filePath = await window.electronAPI.showSaveDialog();
     if (filePath) {
       // Proceed with file-saving logic here, e.g., save file content at `filePath`
-      setTorrentPath(filePath);
+      setDownloadPath(filePath);
       console.log('Selected file path:', filePath);
       // Perform file writing logic here
     } else {
@@ -203,7 +203,7 @@ export default function Home() {
 //     const folderPath = await window.electronAPI.showFolderDialog();
 //     if (folderPath) {
 //       console.log('Selected folder path:', folderPath);
-//       setTorrentPath(folderPath);
+//       setDownloadPath(folderPath);
 //       // Use the folder path for your logic, e.g., saving files in this folder
 //     } else {
 //       console.log('Folder selection was canceled');
@@ -264,15 +264,15 @@ export default function Home() {
                         </div>
                     </div>
                     <div>
-                        <p className={`${!torrentPath ? 'text-warning' : ''}`}>
+                        <p className={`${!downloadPath ? 'text-warning' : ''}`}>
                         {
-                            torrentPath ? `Đường dẫn lưu file của bạn là: ${torrentPath}` : 'Bạn chưa chọn nơi lưu file'
+                            downloadPath ? `Đường dẫn lưu file của bạn là: ${downloadPath}` : 'Bạn chưa chọn nơi lưu file'
                         
                         }
                         </p>
                         <div>
                             <button disabled={uploadFile} className='btn btn-primary' onClick={e => handleSelectFile(e)}>Chọn đường dẫn lưu file</button>
-                            {torrentPath &&  <button className='btn btn-danger mx-4' onClick={e => {e.preventDefault();  setTorrentPath('')}}>Xóa đường dẫn lưu file</button>}
+                            {downloadPath &&  <button className='btn btn-danger mx-4' onClick={e => {e.preventDefault();  setDownloadPath('')}}>Xóa đường dẫn lưu file</button>}
                         </div>
                     </div>
                 </div>
@@ -310,7 +310,7 @@ export default function Home() {
                     className='btn btn-primary mt-4' 
                     type='submit' 
                     onClick={e => handleOnClick(e)} 
-                    disabled={ ((!magnetText && !torrentFilePath) || !torrentPath) && (!uploadFile || !saveTorrentPath) }
+                    disabled={ ((!magnetText && !torrentFilePath) || !downloadPath) && (!uploadFile || !saveTorrentPath) }
                     >
                         {state === 'download' ? 'Tải về' : 'Chia sẻ'}
                     </button>
@@ -326,7 +326,7 @@ export default function Home() {
               <button 
                 // disabled={(!magnetText && !torrentFile) || !path} 
                 onClick={handleOnClick} className='btn btn-secondary mt-4 mx-2'
-                disabled={ ((!magnetText && !torrentFilePath) || !torrentPath) && 
+                disabled={ ((!magnetText && !torrentFilePath) || !downloadPath) && 
                            (!uploadFile || !saveTorrentPath) }
               >
                 Nhập magnet text

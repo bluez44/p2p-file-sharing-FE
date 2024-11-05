@@ -94,7 +94,7 @@ function FileList() {
                 <MyButton status={fileStatus[index]} />
             </li>
             ))}
-            <li className='list-group-item text-start font-weight-bold'>Tập tin trong lưu trũ cục bộ</li>
+            <li className='list-group-item text-start font-weight-bold'>Magnet text tập tin đã tải</li>
             {savedMagnetText.length > 0 && savedMagnetText.map((text, index) => (
             <li className='list-group-item d-flex justify-content-between align-items-center' key={index}>  
                 <span className='d-inline-block'>{text}</span>
