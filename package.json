@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "electron-torrent-client",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
     "electron",
@@ -240,8 +240,12 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "electron-torrent-client",
+      "repo": "electron-torrent-client"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   },
   "collective": {
